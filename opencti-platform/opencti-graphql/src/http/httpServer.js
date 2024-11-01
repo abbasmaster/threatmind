@@ -126,7 +126,7 @@ const createHttpServer = async () => {
         executeContext.previousStandard = req.headers['previous-standard']; // Previous standard id
         executeContext.synchronizedUpsert = req.headers['synchronized-upsert'] === 'true'; // If full sync needs to be done
         try {
-          const user = await authenticateUserFromRequest(executeContext, req, res);
+          const user = await authenticateUserFromRequest(executeContext, req);
           if (user) {
             if (isFeatureEnabled('DRAFT_WORKSPACE') && !executeContext.draft_context) {
               executeContext.draft_context = user.draft_context;
