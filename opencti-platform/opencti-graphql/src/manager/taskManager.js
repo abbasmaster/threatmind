@@ -567,7 +567,7 @@ export const taskHandler = async () => {
     // region Task checking
     if (!task) {
       // Nothing to execute.
-      logApp.info('[OPENCTI-MODULE][TASK-MANAGER] No task to execute found, stopping.');
+      logApp.debug('[OPENCTI-MODULE][TASK-MANAGER] No task to execute found, stopping.');
       return;
     }
     const isQueryTask = task.type === TASK_TYPE_QUERY;
