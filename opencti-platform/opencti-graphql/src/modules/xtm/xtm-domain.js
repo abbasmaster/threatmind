@@ -1,4 +1,3 @@
-import * as R from 'ramda';
 import { listAllToEntitiesThroughRelations, storeLoadById } from '../../database/middleware-loader';
 import { ABSTRACT_STIX_DOMAIN_OBJECT, buildRefRelationKey, ENTITY_TYPE_CONTAINER, ENTITY_TYPE_IDENTITY } from '../../schema/general';
 import { RELATION_CREATED_BY, RELATION_OBJECT, RELATION_OBJECT_LABEL } from '../../schema/stixRefRelationship';
@@ -81,7 +80,7 @@ export const resolveContent = async (context, user, stixCoreObject) => {
     files = await resolveFiles(context, user, stixCoreObject);
   } else {
     const containers = await listAllToEntitiesThroughRelations(context, user, stixCoreObject.id, RELATION_OBJECT, [ENTITY_TYPE_CONTAINER_REPORT]);
-    const allFiles = await Promise.all(R.take(15, containers).map((container) => resolveFiles(context, user, container)));
+    const allFiles = await Promise.all(containers.slice(0, 15).map((container) => resolveFiles(context, user, container)));
     files = allFiles.flat();
     names = containers.map((n) => n.name);
     descriptions = containers.map((n) => n.description);
@@ -105,7 +104,7 @@ export const generateOpenBasScenario = async (
   }
 
   const content = await resolveContent(context, user, stixCoreObject);
-  const finalAttackPatterns = R.take(RESOLUTION_LIMIT, attackPatterns);
+  const finalAttackPatterns = attackPatterns.slice(0, RESOLUTION_LIMIT);
 
   // Create the scenario
   const name = `[${stixCoreObject.entity_type}] ${extractEntityRepresentativeName(stixCoreObject)}`;
@@ -346,9 +345,9 @@ export const generateOpenBasScenario = async (
         attackPatternsWithoutInjectorContracts.push(obasAttackPattern.attack_pattern_external_id);
         logApp.info(`[GENERATION SCENARIO OBAS] No injector contracts available for this attack pattern ${obasAttackPattern.attack_pattern_external_id}`);
       } else {
-        let finalObasInjectorContracts = R.take(5, getShuffledArr(obasInjectorContracts));
+        let finalObasInjectorContracts = getShuffledArr(obasInjectorContracts).slice(0, 5);
         if (selection === 'random') {
-          finalObasInjectorContracts = R.take(1, finalObasInjectorContracts);
+          finalObasInjectorContracts = finalObasInjectorContracts.slice(0, 1);
         }
         if (simulationType === 'technical') {
           // eslint-disable-next-line no-restricted-syntax
