@@ -911,7 +911,7 @@ const ContainerHeader = (props) => {
               <StixCoreObjectSubscribers triggerData={triggerData} />
             )}
             {!knowledge && disableSharing !== true && (
-              <StixCoreObjectSharing elementId={container.id} variant="header" disabled={container.authorized_members?.length > 0} />
+              <StixCoreObjectSharing elementId={container.id} variant="header" disabled={isAuthorizedMembersEnabled} />
             )}
             <Security
               needs={[KNOWLEDGE_KNUPDATE_KNMANAGEAUTHMEMBERS]}
