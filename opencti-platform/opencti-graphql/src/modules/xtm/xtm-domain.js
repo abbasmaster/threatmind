@@ -121,11 +121,13 @@ export const generateOpenBasScenario = async (
   );
 
   // Get kill chin phases
-  const sortByPhaseOrder = R.sortBy(R.prop('phase_order'));
   const obasKillChainPhases = await getKillChainPhases();
-  const sortedObasKillChainPhases = sortByPhaseOrder(obasKillChainPhases);
+  const sortedObasKillChainPhases = obasKillChainPhases.sort((a, b) => a.phase_order - b.phase_order);
   const killChainPhasesListOfNames = sortedObasKillChainPhases.map((n) => n.phase_name).join(', ');
-  const indexedSortedObasKillChainPhase = R.indexBy(R.prop('phase_id'), sortedObasKillChainPhases);
+  const indexedSortedObasKillChainPhase = sortedObasKillChainPhases.reduce((acc, phase) => {
+    acc[phase.phase_id] = phase;
+    return acc;
+  }, {});
 
   let dependsOnDuration = 0;
   if (simulationType !== 'technical' && attackPatterns.length === 0) {
@@ -235,13 +237,17 @@ export const generateOpenBasScenario = async (
   const filteredObasAttackPatterns = obasAttackPatterns.filter((n) => attackPatternsMitreIds.includes(n.attack_pattern_external_id));
 
   // Enrich with the earliest kill chain phase
-  const enrichedFilteredObasAttackPatterns = filteredObasAttackPatterns.map(
-    (n) => R.assoc('attack_pattern_kill_chain_phase', sortByPhaseOrder(n.attack_pattern_kill_chain_phases.map((o) => indexedSortedObasKillChainPhase[o])).at(0), n)
-  );
+  const enrichedFilteredObasAttackPatterns = filteredObasAttackPatterns.map((n) => {
+    const earliestKillChainPhase = n.attack_pattern_kill_chain_phases
+      .map((phaseId) => indexedSortedObasKillChainPhase[phaseId])
+      .sort((a, b) => a.phase_order - b.phase_order)[0];
+    return { ...n, attack_pattern_kill_chain_phase: earliestKillChainPhase };
+  });
 
   // Sort attack pattern by kill chain phase
-  const sortByKillChainPhase = R.sortBy(R.path(['attack_pattern_kill_chain_phase', 'phase_order']));
-  const sortedEnrichedFilteredObasAttackPatterns = sortByKillChainPhase(enrichedFilteredObasAttackPatterns);
+  const sortedEnrichedFilteredObasAttackPatterns = enrichedFilteredObasAttackPatterns.sort((a, b) => {
+    return a.attack_pattern_kill_chain_phase.phase_order - b.attack_pattern_kill_chain_phase.phase_order;
+  });
 
   // Initialize an array to collect attack patterns without contracts
   const attackPatternsWithoutInjectorContracts = [];
