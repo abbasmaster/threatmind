@@ -97,7 +97,7 @@ const createApolloServer = () => {
     tracing: DEV_MODE,
     plugins: apolloPlugins,
     cors: {
-      origin: '', // TODO frontend url
+      origin: 'http://localhost:4000',
       credentials: true,
     },
     formatError: (formattedError) => {
