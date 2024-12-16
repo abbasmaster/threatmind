@@ -441,7 +441,7 @@ const executeShareMultiple = async (context, user, actionContext, element) => {
 const executeUnshareMultiple = async (context, user, actionContext, element) => {
   await Promise.all(actionContext.values.map((organizationId) => removeOrganizationRestriction(context, user, element.id, organizationId)));
 };
-const executeRemoveAuthMembers = async (context, user, element) => {
+export const executeRemoveAuthMembers = async (context, user, element) => {
   await editAuthorizedMembers(context, user, {
     entityId: element.id,
     entityType: element.entity_type,
