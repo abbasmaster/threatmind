@@ -22,6 +22,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import CircularProgress from '@mui/material/CircularProgress';
 import { makeStyles, useTheme } from '@mui/styles';
+import StixCoreObjectEnrollPlaybook from '../stix_core_objects/StixCoreObjectEnrollPlaybook';
 import StixCoreObjectFileExportButton from '../stix_core_objects/StixCoreObjectFileExportButton';
 import { DraftChip } from '../draft/DraftChip';
 import { stixCoreObjectQuickSubscriptionContentQuery } from '../stix_core_objects/stixCoreObjectTriggersUtils';
@@ -480,7 +481,6 @@ const ContainerHeader = (props) => {
   const [selectedEntity, setSelectedEntity] = useState({});
   const [applying, setApplying] = useState([]);
   const [applied, setApplied] = useState([]);
-  const [displayEnrichment, setDisplayEnrichment] = useState(false);
   const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   // Suggestions
   const resolveThreats = (objects) => objects.filter(
@@ -527,12 +527,6 @@ const ContainerHeader = (props) => {
     return JSON.parse(
       localStorage.getItem(`suggestions-rules-${container.id}`) || '[]',
     );
-  };
-  const handleCloseEnrichment = () => {
-    setDisplayEnrichment(false);
-  };
-  const handleOpenEnrichment = () => {
-    setDisplayEnrichment(true);
   };
   const handleExportCompleted = (fileName) => {
     // navigate with fileName in query params to select the created file
@@ -1121,9 +1115,9 @@ const ContainerHeader = (props) => {
               <Security needs={[KNOWLEDGE_KNENRICHMENT]}>
                 <StixCoreObjectEnrichment
                   stixCoreObjectId={container.id}
-                  displayEnrichment={displayEnrichment}
-                  handleOpenEnrichment={handleOpenEnrichment}
-                  handleClose={handleCloseEnrichment}
+                />
+                <StixCoreObjectEnrollPlaybook
+                  stixCoreObjectId={container.id}
                 />
               </Security>
             )}
