@@ -481,7 +481,6 @@ const ContainerHeader = (props) => {
   const [selectedEntity, setSelectedEntity] = useState({});
   const [applying, setApplying] = useState([]);
   const [applied, setApplied] = useState([]);
-  const [displayEnrichment, setDisplayEnrichment] = useState(false);
   const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   // Suggestions
   const resolveThreats = (objects) => objects.filter(
@@ -528,12 +527,6 @@ const ContainerHeader = (props) => {
     return JSON.parse(
       localStorage.getItem(`suggestions-rules-${container.id}`) || '[]',
     );
-  };
-  const handleCloseEnrichment = () => {
-    setDisplayEnrichment(false);
-  };
-  const handleOpenEnrichment = () => {
-    setDisplayEnrichment(true);
   };
   const handleExportCompleted = (fileName) => {
     // navigate with fileName in query params to select the created file
@@ -1122,9 +1115,6 @@ const ContainerHeader = (props) => {
               <Security needs={[KNOWLEDGE_KNENRICHMENT]}>
                 <StixCoreObjectEnrichment
                   stixCoreObjectId={container.id}
-                  displayEnrichment={displayEnrichment}
-                  handleOpenEnrichment={handleOpenEnrichment}
-                  handleClose={handleCloseEnrichment}
                 />
                 <StixCoreObjectEnrollPlaybook
                   stixCoreObjectId={container.id}
