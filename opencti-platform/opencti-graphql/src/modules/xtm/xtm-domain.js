@@ -358,7 +358,8 @@ export const generateOpenBasScenario = async (
           dependsOnDuration,
           null,
           [{ value: 'opencti', color: '#001bda' }, { value: 'technical', color: '#b9461a' }],
-          false
+          false,
+          `This placeholder is disabled because this ttp ${obasAttackPattern.attack_pattern_external_id} with platforms ${platforms.join(',')} and architecture ${architecture} is not covered by openbas`
         );
       } else {
         let finalObasInjectorContracts = getShuffledArr(obasInjectorContracts).slice(0, 5);
