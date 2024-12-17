@@ -39,6 +39,7 @@ import {
   DeleteOutlined,
   LanguageOutlined,
   LinkOffOutlined,
+  LockOpenOutlined,
   MergeOutlined,
   MoveToInboxOutlined,
   RestoreOutlined,
@@ -559,7 +560,12 @@ class DataTableToolBar extends Component {
       this.handleOpenTask();
     });
   }
-
+  handleLaunchRemoveAuthMembers() {
+    const actions = [{ type: 'REMOVE_AUTH_MEMBERS', context: null }];
+    this.setState({ actions }, () => {
+      this.handleOpenTask();
+    });
+  }
   handleLaunchRemove() {
     const actions = [
       {
@@ -1599,6 +1605,7 @@ class DataTableToolBar extends Component {
       deleteDisable,
       mergeDisable,
       deleteOperationEnabled,
+      removeAuthMembersEnabled,
       warning,
       warningMessage,
       taskScope,
@@ -1729,6 +1736,24 @@ class DataTableToolBar extends Component {
                   </IconButton>
                 </div>
                 <div>
+                  {removeAuthMembersEnabled && (
+                    <Security needs={[BYPASS]}>
+                      <Tooltip title={t('Remove access restriction')}>
+                        <IconButton
+                          color="primary"
+                          aria-label="input"
+                          onClick={this.handleLaunchRemoveAuthMembers.bind(this)}
+                          size="small"
+                          disabled={
+                            numberOfSelectedElements === 0
+                            || this.state.processing
+                          }
+                        >
+                          <LockOpenOutlined fontSize="small" color={'primary'} />
+                        </IconButton>
+                      </Tooltip>
+                    </Security>
+                  )}
                   <Security needs={[KNOWLEDGE_KNUPDATE]}>
                     {!typesAreNotUpdatable && (
                       <Tooltip title={t('Update')}>
@@ -2828,6 +2853,7 @@ DataTableToolBar.propTypes = {
   rightOffset: PropTypes.number,
   mergeDisable: PropTypes.bool,
   deleteOperationEnabled: PropTypes.bool,
+  removeAuthMembersEnabled: PropTypes.bool,
   taskScope: PropTypes.string,
 };
 

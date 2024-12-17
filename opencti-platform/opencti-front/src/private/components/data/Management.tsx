@@ -220,6 +220,7 @@ const Management = () => {
             toolbarFilters={contextFilters}
             entityTypes={['Stix-Core-Object']}
             searchContextFinal={{ entityTypes: ['Stix-Core-Object'] }}
+            removeAuthMembersEnabled={true}
           />
         )}
       </div>
