@@ -18,6 +18,7 @@ import { ENTITY_TYPE_DELETE_OPERATION } from '../modules/deleteOperation/deleteO
 import { BackgroundTaskScope, Capabilities, FilterMode } from '../generated/graphql';
 import { extractFilterGroupValues, isFilterGroupNotEmpty } from '../utils/filtering/filtering-utils';
 import { getDraftContext } from '../utils/draftContext';
+import { logApp } from '../config/conf';
 
 export const TASK_TYPE_QUERY = 'QUERY';
 export const TASK_TYPE_RULE = 'RULE';
@@ -236,6 +237,7 @@ export const createDefaultTask = (user, input, taskType, taskExpectedNumber, sco
     task_processed_number: 0, // Initial number of processed element
     task_expected_number: taskExpectedNumber, // Expected number of element processed
     errors: [], // To stock the errors
+
   };
   if (scope) { // add rights for query tasks and list tasks
     task = {
@@ -284,6 +286,7 @@ const authorizedMembersForTask = (user, scope) => {
 };
 
 export const createListTask = async (context, user, input) => {
+  logApp.info('ANGIE - bgTaskCommon ; createListTask, input:', { input });
   if (getDraftContext(context, user)) throw new Error('Cannot create background task in draft');
   const { actions, ids, scope } = input;
   await checkActionValidity(context, user, input, scope, TASK_TYPE_LIST);

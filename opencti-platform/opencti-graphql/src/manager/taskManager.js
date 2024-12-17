@@ -159,24 +159,29 @@ const computeRuleTaskElements = async (context, user, task) => {
 };
 
 export const computeQueryTaskElements = async (context, user, task) => {
-  const { actions, task_position, task_filters, task_search = null, task_excluded_ids = [], scope } = task;
+  const { actions, task_position, task_filters, task_search = null, task_excluded_ids = [], scope, orderMode } = task;
+  logApp.info('ANGIE - computeQueryTaskElements');
+
   const processingElements = [];
   // Fetch the information
   // note that the query is filtered to allow only elements with matching confidence level
-  const data = await executeTaskQuery(context, user, task_filters, task_search, scope, task_position);
+  const data = await executeTaskQuery(context, user, task_filters, task_search, scope, orderMode, task_position);
+  logApp.info('ANGIE - computeQueryTaskElements', { count: data.edges.length });
   // const expectedNumber = data.pageInfo.globalCount;
   const elements = data.edges;
   // Apply the actions for each element
   for (let elementIndex = 0; elementIndex < elements.length; elementIndex += 1) {
     const element = elements[elementIndex];
     if (!task_excluded_ids.includes(element.node.id)) { // keep only the elements that are not excluded (via unticked checkboxes in UI)
+      logApp.info('ANGIE - pushing element', { base_type: element.node.base_type, standard_id: element.node.standard_id, created_at: element.node.created_at });
       processingElements.push({ element: element.node, next: element.cursor });
     }
   }
   return { actions, elements: processingElements };
 };
 const computeListTaskElements = async (context, user, task) => {
-  const { actions, task_position, task_ids, scope } = task;
+  logApp.info('ANGIE - task ordering ?', { task });
+  const { actions, task_position, task_ids, scope, task_ordering } = task;
   const isUndefinedPosition = R.isNil(task_position) || R.isEmpty(task_position);
   const startIndex = isUndefinedPosition ? 0 : task_ids.findIndex((id) => task_position === id) + 1;
   const ids = R.take(MAX_TASK_ELEMENTS, task_ids.slice(startIndex));
@@ -192,7 +197,7 @@ const computeListTaskElements = async (context, user, task) => {
   }
   const options = {
     type,
-    orderMode: 'desc',
+    orderMode: task_ordering || 'desc',
     orderBy: scope === BackgroundTaskScope.Import ? 'lastModified' : 'created_at',
   };
   const elements = await internalFindByIds(context, user, ids, options);
@@ -403,6 +408,7 @@ const executeRuleElementRescan = async (context, user, actionContext, element) =
   }
 };
 const executeShare = async (context, user, actionContext, element) => {
+  logApp.info('ANGIE - executeShare');
   const { values } = actionContext;
   for (let indexCreate = 0; indexCreate < values.length; indexCreate += 1) {
     const target = values[indexCreate];
@@ -433,6 +439,7 @@ const executeUnshare = async (context, user, actionContext, element) => {
   }
 };
 const executeShareMultiple = async (context, user, actionContext, element) => {
+  logApp.info('ANGIE - executeShareMultiple');
   await Promise.all(actionContext.values.map((organizationId) => addOrganizationRestriction(context, user, element.id, organizationId)));
 };
 const executeUnshareMultiple = async (context, user, actionContext, element) => {
@@ -563,7 +570,7 @@ export const taskHandler = async () => {
     // region Task checking
     if (!task) {
       // Nothing to execute.
-      logApp.info('[OPENCTI-MODULE][TASK-MANAGER] No task to execute found, stopping.');
+      logApp.debug('[OPENCTI-MODULE][TASK-MANAGER] No task to execute found, stopping.');
       return;
     }
     const isQueryTask = task.type === TASK_TYPE_QUERY;

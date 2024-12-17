@@ -22,7 +22,7 @@ import {
 import { UPDATE_OPERATION_ADD, UPDATE_OPERATION_REMOVE } from '../database/utils';
 import { extractEntityRepresentativeName } from '../database/entity-representative';
 import { notify } from '../database/redis';
-import { BUS_TOPICS } from '../config/conf';
+import { BUS_TOPICS, logApp } from '../config/conf';
 import { createQueryTask } from './backgroundTask';
 import { getParentTypes } from '../schema/schemaUtils';
 import { internalLoadById, storeLoadById } from '../database/middleware-loader';
@@ -273,12 +273,14 @@ const createSharingTask = async (context, type, containerId, organizationId) => 
 };
 
 export const addOrganizationRestriction = async (context, user, fromId, organizationId) => {
+  logApp.info('ANGIE - addOrganizationRestriction', { fromId, organizationId });
   if (getDraftContext(context, user)) throw new Error('Cannot restrict organization in draft');
   const from = await internalLoadById(context, user, fromId);
   const updates = [{ key: INPUT_GRANTED_REFS, value: [organizationId], operation: UPDATE_OPERATION_ADD }];
   // We skip references validation when updating organization sharing
   const data = await updateAttribute(context, user, fromId, from.entity_type, updates, { bypassValidation: true });
   if (isStixDomainObjectShareableContainer(from.entity_type)) {
+    logApp.info('ANGIE - resolver createSharingTask', { fromId, organizationId });
     await createSharingTask(context, 'SHARE', fromId, organizationId);
   }
   return notify(BUS_TOPICS[ABSTRACT_STIX_OBJECT].EDIT_TOPIC, data.element, user);
