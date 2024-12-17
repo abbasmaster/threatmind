@@ -350,6 +350,16 @@ export const generateOpenBasScenario = async (
       if (obasInjectorContracts.length === 0) {
         attackPatternsWithoutInjectorContracts.push(obasAttackPattern.attack_pattern_external_id);
         logApp.info(`[GENERATION SCENARIO OBAS] No injector contracts available for this attack pattern ${obasAttackPattern.attack_pattern_external_id}`);
+        await createInjectInScenario(
+          obasScenario.scenario_id,
+          'openbas_manual',
+          'd02e9132-b9d0-4daa-b3b1-4b9871f8472c',
+          `[Placeholder] ${obasAttackPattern.attack_pattern_external_id} - ${platforms.join(',')} ${architecture}`,
+          dependsOnDuration,
+          null,
+          [{ value: 'opencti', color: '#001bda' }, { value: 'technical', color: '#b9461a' }],
+          false
+        );
       } else {
         let finalObasInjectorContracts = getShuffledArr(obasInjectorContracts).slice(0, 5);
         if (selection === 'random') {
