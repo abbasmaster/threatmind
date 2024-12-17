@@ -22,6 +22,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import CircularProgress from '@mui/material/CircularProgress';
 import { makeStyles, useTheme } from '@mui/styles';
+import StixCoreObjectEnrollPlaybook from '../stix_core_objects/StixCoreObjectEnrollPlaybook';
 import StixCoreObjectFileExportButton from '../stix_core_objects/StixCoreObjectFileExportButton';
 import { DraftChip } from '../draft/DraftChip';
 import { stixCoreObjectQuickSubscriptionContentQuery } from '../stix_core_objects/stixCoreObjectTriggersUtils';
@@ -1124,6 +1125,9 @@ const ContainerHeader = (props) => {
                   displayEnrichment={displayEnrichment}
                   handleOpenEnrichment={handleOpenEnrichment}
                   handleClose={handleCloseEnrichment}
+                />
+                <StixCoreObjectEnrollPlaybook
+                  stixCoreObjectId={container.id}
                 />
               </Security>
             )}
