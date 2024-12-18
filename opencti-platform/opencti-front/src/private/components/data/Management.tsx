@@ -203,7 +203,7 @@ const Management = () => {
       <div style={{ paddingRight: isRightMenuManagementEnable ? '200px' : 0 }}>
         <Breadcrumbs elements={[
           { label: t_i18n('Data') },
-          { label: t_i18n('Management') },
+          { label: t_i18n('Restriction') },
           { label: t_i18n('Restricted entities'), current: true },
         ]}
         />
