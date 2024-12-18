@@ -1755,7 +1755,7 @@ class DataTableToolBar extends Component {
                     </Security>
                   )}
                   <Security needs={[KNOWLEDGE_KNUPDATE]}>
-                    {!typesAreNotUpdatable && (
+                    {!typesAreNotUpdatable && !removeAuthMembersEnabled && (
                       <Tooltip title={t('Update')}>
                         <span>
                           <IconButton
@@ -1773,6 +1773,7 @@ class DataTableToolBar extends Component {
                         </span>
                       </Tooltip>
                     )}
+                    {!removeAuthMembersEnabled && (
                     <UserContext.Consumer>
                       {({ platformModuleHelpers }) => {
                         const label = platformModuleHelpers.isRuleEngineEnable()
@@ -1799,6 +1800,7 @@ class DataTableToolBar extends Component {
                         );
                       }}
                     </UserContext.Consumer>
+                    )}
                     {this.props.handleCopy && (
                       <Tooltip title={titleCopy}>
                         <span>
@@ -1817,7 +1819,7 @@ class DataTableToolBar extends Component {
                         </span>
                       </Tooltip>
                     )}
-                    {!enrichDisable && (
+                    {!enrichDisable && !removeAuthMembersEnabled && (
                       <Tooltip title={t('Enrichment')}>
                         <span>
                           <IconButton
@@ -1847,7 +1849,7 @@ class DataTableToolBar extends Component {
                         </span>
                       </Tooltip>
                     )}
-                    {enableMerge && (
+                    {enableMerge && !removeAuthMembersEnabled && (
                       <Tooltip title={t('Merge')}>
                         <span>
                           <IconButton
@@ -1870,7 +1872,7 @@ class DataTableToolBar extends Component {
                       </Tooltip>
                     )}
                   </Security>
-                  {!typesAreNotAddableInContainer && (
+                  {!typesAreNotAddableInContainer && !removeAuthMembersEnabled && (
                     <Security needs={[KNOWLEDGE_KNUPDATE]}>
                       <Tooltip title={t('Add in container')}>
                         <span>
@@ -1910,7 +1912,7 @@ class DataTableToolBar extends Component {
                       </Tooltip>
                     </Security>
                   )}
-                  {!deleteOperationEnabled && isShareableType && (
+                  {!deleteOperationEnabled && isShareableType && !removeAuthMembersEnabled && (
                     <>
                       <Security needs={[KNOWLEDGE_KNUPDATE_KNORGARESTRICT]}>
                         <EETooltip title={t('Share with organizations')}>
@@ -1946,7 +1948,7 @@ class DataTableToolBar extends Component {
                       </Security>
                     </>
                   )}
-                  {deleteDisable !== true && (
+                  {deleteDisable !== true && !removeAuthMembersEnabled && (
                     <Security needs={[deleteCapability]}>
                       <Tooltip title={warningMessage || t('Delete')}>
                         <span>
