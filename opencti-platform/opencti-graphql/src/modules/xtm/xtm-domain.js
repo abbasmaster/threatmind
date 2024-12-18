@@ -391,7 +391,7 @@ export const generateOpenBasScenario = async (
 
   return {
     urlResponse: `${XTM_OPENBAS_URL}/admin/scenarios/${obasScenario.scenario_id}/injects`,
-    attackPatternsWithoutInjectorContracts: attackPatternsWithoutInjectorContracts.join(', ')
+    attackPatternsWithoutInjectorContracts: attackPatternsWithoutInjectorContracts.join(',')
   };
 };
 
