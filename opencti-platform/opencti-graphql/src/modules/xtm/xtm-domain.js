@@ -354,12 +354,12 @@ export const generateOpenBasScenario = async (
           obasScenario.scenario_id,
           'openbas_manual',
           'd02e9132-b9d0-4daa-b3b1-4b9871f8472c',
-          `[Placeholder] ${obasAttackPattern.attack_pattern_external_id} - ${platforms.join(',')} ${architecture}`,
+          `[${obasAttackPattern.attack_pattern_external_id}] Placeholder - ${platforms.join(',')} ${architecture}`,
           dependsOnDuration,
           null,
           [{ value: 'opencti', color: '#001bda' }, { value: 'technical', color: '#b9461a' }],
           false,
-          `This placeholder is disabled because this TTP ${obasAttackPattern.attack_pattern_external_id}, with platforms ${platforms.join(',')} and architecture ${architecture}, is not covered by openBAS`
+          `This placeholder is disabled because this TTP ${obasAttackPattern.attack_pattern_external_id}, with platforms ${platforms.join(',')} and architecture ${architecture}, is not covered by this openBAS`
         );
       } else {
         let finalObasInjectorContracts = getShuffledArr(obasInjectorContracts).slice(0, 5);
