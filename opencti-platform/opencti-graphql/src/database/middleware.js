@@ -858,8 +858,6 @@ const isRelationTargetGrants = (elementGrants, relation, type) => {
   return type === ACTION_TYPE_UNSHARE || !elementGrants.every((v) => (relation.to[RELATION_GRANTED_TO] ?? []).includes(v));
 };
 const createContainerSharingTask = (context, type, element, relations = []) => {
-  logApp.info('ANGIE - createContainerSharingTask', { standard_id: element.standard_id, from: { id: element.fromId, base_type: element.from.base_type }, to: { id: element.toId, base_type: element.to.base_type }, base_type: element.base_type });
-  // FIXME we need to share entities BEFORE sharing relationships
   // If object_refs relations are newly created
   // One side is a container, the other side must inherit from the granted_refs
   const targetGrantIds = [];
@@ -867,7 +865,6 @@ const createContainerSharingTask = (context, type, element, relations = []) => {
   const elementGrants = (relations ?? []).filter((e) => e.entity_type === RELATION_GRANTED_TO).map((r) => r.to.internal_id);
   // If container is granted, we need to grant every new children.
   if (element.base_type === BASE_TYPE_ENTITY && isStixDomainObjectShareableContainer(element.entity_type)) {
-    logApp.info('ANGIE - createContainerSharingTask container is granted');
     elementGrants.push(...(element[RELATION_GRANTED_TO] ?? []));
     if (elementGrants.length > 0) {
       // A container has created or modified (addition of some object_refs)
@@ -876,8 +873,6 @@ const createContainerSharingTask = (context, type, element, relations = []) => {
       const newChildrenIds = (relations ?? [])
         .filter((e) => isRelationTargetGrants(elementGrants, e, type))
         .map((r) => r.to.internal_id);
-
-      // push first entity_type = entity then rel
       targetGrantIds.push(...newChildrenIds);
     }
   }
@@ -891,8 +886,7 @@ const createContainerSharingTask = (context, type, element, relations = []) => {
   }
   // If element needs to be updated, start a SHARE background task
   if (targetGrantIds.length > 0) {
-    const input = { ids: targetGrantIds, scope: 'KNOWLEDGE', actions: [{ type, context: { values: elementGrants } }], ordering: 'desc' };
-    logApp.info('ANGIE - createListTask, input:', { input });
+    const input = { ids: targetGrantIds, scope: 'KNOWLEDGE', actions: [{ type, context: { values: elementGrants } }] };
     taskPromise = createListTask(context, context.user, input);
   }
   return taskPromise;
@@ -900,7 +894,6 @@ const createContainerSharingTask = (context, type, element, relations = []) => {
 const indexCreatedElement = async (context, user, { element, relations }) => {
   // Continue the creation of the element and the connected relations
   const indexPromise = elIndexElements(context, user, element.entity_type, [element, ...(relations ?? [])]);
-  logApp.info('ANGIE - indexCreatedElement, createContainerSharingTask promise');
   const taskPromise = createContainerSharingTask(context, ACTION_TYPE_SHARE, element, relations);
   await Promise.all([taskPromise, indexPromise]);
 };
@@ -2173,7 +2166,6 @@ export const updateAttributeMetaResolved = async (context, user, initial, inputs
       // in case of addition in a container objects, we need to propagate the sharing to these new objects
       const objectsRefRelationships = relationsToCreate.filter((r) => r.relationship_type === RELATION_OBJECT);
       if (objectsRefRelationships.length > 0) {
-        logApp.info('ANGIE - relationsToCreate.length > 0, createContainerSharingTask run');
         await createContainerSharingTask(context, ACTION_TYPE_SHARE, initial, objectsRefRelationships);
       }
     }

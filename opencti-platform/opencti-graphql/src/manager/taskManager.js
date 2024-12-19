@@ -160,7 +160,7 @@ const computeRuleTaskElements = async (context, user, task) => {
 
 export const computeQueryTaskElements = async (context, user, task) => {
   const { actions, task_position, task_filters, task_search = null, task_excluded_ids = [], scope, orderMode } = task;
-  logApp.info('ANGIE - computeQueryTaskElements');
+  logApp.info('ANGIE - computeQueryTaskElements', { orderMode });
 
   const processingElements = [];
   // Fetch the information
@@ -439,7 +439,6 @@ const executeUnshare = async (context, user, actionContext, element) => {
   }
 };
 const executeShareMultiple = async (context, user, actionContext, element) => {
-  logApp.info('ANGIE - executeShareMultiple');
   await Promise.all(actionContext.values.map((organizationId) => addOrganizationRestriction(context, user, element.id, organizationId)));
 };
 const executeUnshareMultiple = async (context, user, actionContext, element) => {

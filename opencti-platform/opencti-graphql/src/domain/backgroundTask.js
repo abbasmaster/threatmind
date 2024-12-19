@@ -56,6 +56,7 @@ export const findAll = (context, user, args) => {
 };
 
 const buildQueryFilters = async (context, user, filters, search, taskPosition, scope, orderMode) => {
+  logApp.info('ANGIE - buildQueryFilters orderMode:', { orderMode });
   let inputFilters = filters ? JSON.parse(filters) : undefined;
   if (scope === BackgroundTaskScope.Import) {
     const entityIdFilters = inputFilters.filters.findIndex(({ key }) => key.includes('entity_id'));
@@ -96,7 +97,7 @@ const buildQueryFilters = async (context, user, filters, search, taskPosition, s
   return {
     types,
     first: MAX_TASK_ELEMENTS,
-    orderMode: 'asc', // FIXME we need asc here in case of sharing tasks, desc by default
+    orderMode: orderMode || 'desc', // FIXME we need asc here in case of sharing tasks, desc by default
     orderBy: 'created_at',
     after: taskPosition,
     filters: inputFilters,
