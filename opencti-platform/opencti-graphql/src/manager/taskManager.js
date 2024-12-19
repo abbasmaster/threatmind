@@ -160,27 +160,23 @@ const computeRuleTaskElements = async (context, user, task) => {
 
 export const computeQueryTaskElements = async (context, user, task) => {
   const { actions, task_position, task_filters, task_search = null, task_excluded_ids = [], scope, orderMode } = task;
-  logApp.info('ANGIE - computeQueryTaskElements', { orderMode });
 
   const processingElements = [];
   // Fetch the information
   // note that the query is filtered to allow only elements with matching confidence level
   const data = await executeTaskQuery(context, user, task_filters, task_search, scope, orderMode, task_position);
-  logApp.info('ANGIE - computeQueryTaskElements', { count: data.edges.length });
   // const expectedNumber = data.pageInfo.globalCount;
   const elements = data.edges;
   // Apply the actions for each element
   for (let elementIndex = 0; elementIndex < elements.length; elementIndex += 1) {
     const element = elements[elementIndex];
     if (!task_excluded_ids.includes(element.node.id)) { // keep only the elements that are not excluded (via unticked checkboxes in UI)
-      logApp.info('ANGIE - pushing element', { base_type: element.node.base_type, standard_id: element.node.standard_id, created_at: element.node.created_at });
       processingElements.push({ element: element.node, next: element.cursor });
     }
   }
   return { actions, elements: processingElements };
 };
 const computeListTaskElements = async (context, user, task) => {
-  logApp.info('ANGIE - task ordering ?', { task });
   const { actions, task_position, task_ids, scope, task_ordering } = task;
   const isUndefinedPosition = R.isNil(task_position) || R.isEmpty(task_position);
   const startIndex = isUndefinedPosition ? 0 : task_ids.findIndex((id) => task_position === id) + 1;

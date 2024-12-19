@@ -20,7 +20,6 @@ import { BackgroundTaskScope, FilterMode } from '../generated/graphql';
 import { findAll as findAllWorkspaces } from '../modules/workspace/workspace-domain';
 import { addFilter } from '../utils/filtering/filtering-utils';
 import { getDraftContext } from '../utils/draftContext';
-import { logApp } from '../config/conf';
 
 export const DEFAULT_ALLOWED_TASK_ENTITY_TYPES = [
   ABSTRACT_STIX_CORE_OBJECT,
@@ -56,7 +55,6 @@ export const findAll = (context, user, args) => {
 };
 
 const buildQueryFilters = async (context, user, filters, search, taskPosition, scope, orderMode) => {
-  logApp.info('ANGIE - buildQueryFilters orderMode:', { orderMode });
   let inputFilters = filters ? JSON.parse(filters) : undefined;
   if (scope === BackgroundTaskScope.Import) {
     const entityIdFilters = inputFilters.filters.findIndex(({ key }) => key.includes('entity_id'));
@@ -97,7 +95,7 @@ const buildQueryFilters = async (context, user, filters, search, taskPosition, s
   return {
     types,
     first: MAX_TASK_ELEMENTS,
-    orderMode: orderMode || 'desc', // FIXME we need asc here in case of sharing tasks, desc by default
+    orderMode: orderMode || 'desc',
     orderBy: 'created_at',
     after: taskPosition,
     filters: inputFilters,
@@ -106,7 +104,6 @@ const buildQueryFilters = async (context, user, filters, search, taskPosition, s
 };
 export const executeTaskQuery = async (context, user, filters, search, scope, orderMode, start = null) => {
   const options = await buildQueryFilters(context, user, filters, search, start, scope, orderMode);
-  logApp.info('ANGIE - executeTaskQuery', { options });
   return elPaginate(context, user, READ_DATA_INDICES, options);
 };
 
@@ -135,7 +132,6 @@ export const createQueryTask = async (context, user, input) => {
   await checkActionValidity(context, user, input, scope, TASK_TYPE_QUERY);
   const queryData = await executeTaskQuery(context, user, filters, search, scope, 'desc');
   const countExpected = queryData.pageInfo.globalCount - excluded_ids.length;
-  logApp.info('ANGIE - createQueryTask', { input, countExpected });
   const task = createDefaultTask(user, input, TASK_TYPE_QUERY, countExpected, scope);
   const queryTask = {
     ...task,
