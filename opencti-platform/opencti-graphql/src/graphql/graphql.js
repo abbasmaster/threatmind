@@ -2,7 +2,7 @@ import { ApolloServer } from '@apollo/server';
 import { ApolloArmor } from '@escape.tech/graphql-armor';
 import { dissocPath } from 'ramda';
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';
-import { ApolloSandbox } from '@apollo/sandbox';
+import { ApolloServerPluginLandingPageProductionDefault } from '@apollo/server/plugin/landingPage/default';
 import { ApolloServerErrorCode } from '@apollo/server/errors';
 import { createValidation as createAliasBatch } from 'graphql-no-alias';
 import { constraintDirectiveDocumentation } from 'graphql-constraint-directive';
@@ -70,7 +70,12 @@ const createApolloServer = () => {
     apolloValidationRules.push(...protection.validationRules);
   }
   // In production mode, we use static from the server
-  apolloPlugins.push(ApolloServerPluginLandingPageDisabled());
+  if (PLAYGROUND_ENABLED) {
+    apolloPlugins.push(ApolloServerPluginLandingPageProductionDefault({ embed: true }));
+  } else {
+    apolloPlugins.push(ApolloServerPluginLandingPageDisabled());
+  }
+
   // Schema introspection must be accessible only for auth users.
   const secureIntrospectionPlugin = {
     requestDidStart: (requestContext) => {
