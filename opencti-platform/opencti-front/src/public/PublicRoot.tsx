@@ -13,7 +13,6 @@ import PublicDataSharing from './components/PublicDataSharing';
 import PublicDashboard from './components/PublicDashboard';
 import PublicSettingsProvider from './PublicSettingsProvider';
 import Message from '../components/Message';
-import SandBox from './SandBox';
 
 const queryRef = loadQuery<LoginRootPublicQuery>(
   environment,
@@ -36,7 +35,6 @@ const PublicRoot = () => {
             <Routes>
               <Route path="/" element={boundaryWrapper(PublicDataSharing)} />
               <Route path="/dashboard/:uriKey/*" element={boundaryWrapper(PublicDashboard)} />
-              <Route path="/sandbox" element={boundaryWrapper(SandBox)} />
             </Routes>
           </ConnectedIntlProvider>
         </ConnectedThemeProvider>
