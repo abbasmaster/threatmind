@@ -7,7 +7,6 @@ import Loader from './components/Loader';
 
 const PublicRoot = lazy(() => import('./public/PublicRoot'));
 const PrivateRoot = lazy(() => import('./private/Root'));
-const SandBox = lazy(() => import('./public/SandBox'));
 
 const App = () => (
   <BrowserRouter basename={APP_BASE_PATH}>
@@ -17,7 +16,6 @@ const App = () => (
           <Routes>
             <Route path="/dashboard/*" Component={PrivateRoot} />
             <Route path="/public/*" Component={PublicRoot} />
-            <Route path="/sandbox/*" Component={SandBox} />
             {/* By default, redirect to dashboard */}
             <Route
               path="/*"
