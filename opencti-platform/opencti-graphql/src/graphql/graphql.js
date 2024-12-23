@@ -101,10 +101,10 @@ const createApolloServer = () => {
     csrfPrevention: false, // CSRF is handled by helmet
     tracing: DEV_MODE,
     plugins: apolloPlugins,
-    cors: {
+    /* cors: {
       origin: 'http://localhost:4000',
       credentials: true,
-    },
+    }, */
     formatError: (formattedError) => {
       let error = formattedError;
       // For constraint lib user input failure, replace the lib error by the opencti validation one.

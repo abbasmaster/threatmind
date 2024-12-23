@@ -134,7 +134,7 @@ const createApp = async (app) => {
 
   const ancestorsFromConfig = nconf.get('app:public_dashboard_authorized_domains')?.trim() ?? '';
   const frameAncestorDomains = ancestorsFromConfig === '' ? "'none'" : ancestorsFromConfig;
-  const allowedFrameSrc = ["'self'"];
+  const allowedFrameSrc = ["'self'", 'https://sandbox.embed.apollographql.com'];
   const scriptSrc = ["'self'", "'unsafe-inline'", 'http://cdn.jsdelivr.net/npm/@apollographql/', 'https://www.googletagmanager.com/'];
   if (DEV_MODE) {
     scriptSrc.push("'unsafe-eval'");
