@@ -56,7 +56,7 @@ const createHttpServer = async () => {
   // subscriptionServer
   const wsServer = new WebSocketServer({
     server: httpServer,
-    path: `${basePath}/graphql`,
+    path: `${basePath}/graphql`, // TODO
   });
   wsServer.on('error', (e) => {
     throw new Error(e.message);
@@ -108,12 +108,12 @@ const createHttpServer = async () => {
   app.use(express.json({ limit: requestSizeLimit }));
   app.use(graphqlUploadExpress());
   app.use(
-    `${basePath}/graphql`,
+    `${basePath}/graphql`, // TODO
     cors({ origin: basePath }),
     json(),
     expressMiddleware(apolloServer, {
       app,
-      path: `${basePath}/graphql`,
+      path: `${basePath}/graphql`, // TODO
       context: async ({ req, res }) => {
         const executeContext = executionContext('api');
         executeContext.req = req;
